@@ -69,15 +69,13 @@
                 'Authorization': `Bearer ${api_key}`,
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify({
+            data: {
                 "model": model,
-                "prompt": `请生成一个长度不超过${length}字符的摘要：\n\n${excerpt}`,
-                "max_tokens": length * 2,
-                "temperature": 0.7,
-                "top_p": 1,
-                "frequency_penalty": 0,
-                "presence_penalty": 0
-            }),
+                "message": [
+                    {"role": "system", "content": `请生成一个长度不超过${length}字符的摘要：`},
+                    {"role": "user","content": excerpt}
+                ]
+            },
             success: function (data) {
                 loading.destroy();
                 if (data.choices && data.choices[0] && data.choices[0].text) {
