@@ -61,37 +61,37 @@
         let excerpt = excerpt_by_local(content, length);
         let loading = new KZ_Loading('{{ "EXCERPT_LOADING" | gettext }}');
         loading.show();
-
-        fetch(api, {
-            method: 'POST',
+    
+        $.ajax({
+            url: api,
+            type: "POST",
             headers: {
                 'Authorization': `Bearer ${api_key}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                "model": model, 
+            data: JSON.stringify({
+                "model": model,
                 "prompt": `请生成一个长度不超过${length}字符的摘要：\n\n${excerpt}`,
-                "max_tokens": length * 2, 
+                "max_tokens": length * 2,
                 "temperature": 0.7,
                 "top_p": 1,
                 "frequency_penalty": 0,
                 "presence_penalty": 0
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            loading.destroy();
-            if (data.choices && data.choices[0] && data.choices[0].text) {
-                excerpt = data.choices[0].text.trim();
-                return excerpt;
-            } else {
-                throw new Error("ChatGPT API response error");
+            }),
+            success: function (data) {
+                loading.destroy();
+                if (data.choices && data.choices[0] && data.choices[0].text) {
+                    excerpt = data.choices[0].text.trim();
+                    nextstep(excerpt);
+                } else {
+                    throw new Error("ChatGPT API response error");
+                }
+            },
+            error: function (xhr) {
+                loading.destroy();
+                notyf.error("{{ "EXCERPT_FAILED" | gettext }}" + xhr.responseText);
             }
-        })
-        .catch(error => {
-            loading.destroy();
-            notyf.error("{{ "EXCERPT_FAILED" | gettext }}" + error.message);
         });
-        return excerpt;
     }
+
 </script>
