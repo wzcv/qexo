@@ -13,7 +13,7 @@
         } else if (method === "ChatGPT") {
             excerpt = excerpt_by_chatgpt(html, excerpt_config.params.length, excerpt_config.params.api_key, nextstep, excerpt_config.params.api, excerpt_config.params.model );
         }
-
+        console.log(excerpt)
         if (excerpt) {
             front_matter = get_front_matter();
             front_matter[excerpt_config.save_key] = excerpt;
@@ -47,7 +47,8 @@
             },
             success: function (data, status, xhr) {
                 loading.destroy();
-                return data["summary"];
+                excerpt = data["summary"];
+                nextstep();
             },
             error: function (data) {
                 loading.destroy();
@@ -80,7 +81,7 @@
                 loading.destroy();
                 if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
                     excerpt = data.choices[0].message.content.trim();
-                    return excerpt;
+                    nextstep();
                 }
             },
             error: function (data) {
