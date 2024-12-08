@@ -78,11 +78,11 @@
             },
             success: function (data) {
                 loading.destroy();
-                if (data.choices && data.choices[0] && data.choices[0].text) {
-                    excerpt = data.choices[0].text.trim();
-                    nextstep(excerpt);
+                if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+                    excerpt = data.choices[0].message.content.trim();
+                    return excerpt
                 } else {
-                    throw new Error("ChatGPT API response error");
+                    notyf.error("{{ "EXCERPT_FAILED" | gettext }}" + data.responseText);
                 }
             },
             error: function (xhr) {
