@@ -80,7 +80,6 @@
                 loading.destroy();
                 if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
                     excerpt = data.choices[0].message.content.trim();
-                    console.log(excerpt);
                     return excerpt;
                 }
             },
@@ -89,6 +88,7 @@
                 notyf.error("{{ "EXCERPT_FAILED" | gettext }}" + xhr.responseText);
             }
         });
+        return excerpt;
     }
 
 </script>
