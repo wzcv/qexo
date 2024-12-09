@@ -106,6 +106,8 @@ class Main(Language):
             "EXCERPT_CHATGPT_MODEL_PH": "例如：text-davinci-003",
             "EXCERPT_CHATGPT_API": "ChatGPT API URL",
             "EXCERPT_CHATGPT_API_PH": "请输入ChatGPT API的URL",
+            "EXCERPT_CHATGPT_LANGUAGE": "输出语言",
+            "EXCERPT_CHATGPT_LANGUAGE_PH": "例如：中文",
             "EXPORT": "导出",
             "FIND_INDEX_FAILED": "'更新失败: 未找到Index目录",
             "FIND_INDEX_SUCCESS": "找到Index目录",
