@@ -76,7 +76,7 @@
             data: JSON.stringify({
                 "model": model,
                 "messages": [
-                    {"role": "system", "content": `请为以下博客文章撰写一个简明扼要的摘要，长度在100至200字之间。摘要应包括文章的核心主题、关键观点和任何重要的结论或建议。使用${language}输出`},
+                    {"role": "system", "content": `请为以下博客文章撰写一个简明扼要的摘要，长度在100至200字之间。摘要应包括文章的核心主题、关键观点和任何重要的结论或建议，仅输出摘要内容。使用${language}输出`},
                     {"role": "user","content": excerpt}
                 ]
             }),
