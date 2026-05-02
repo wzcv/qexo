@@ -193,6 +193,7 @@ class Main(Language):
             "INIT": "Initialize",
             "INIT_LANGUAGE_INVALID": "Invalid language, please choose a supported one",
             "INIT_2_1": "API Key",
+            "INIT_ALREADY_COMPLETED": "Initialization already completed; cannot perform again",
             "INIT_2_1_PH": "Leave blank for automatic generation",
             "INIT_2_2": "Username",
             "INIT_2_2_PH": "Set Username",

@@ -7,11 +7,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 import hexoweb.libs.image
 from hexoweb.libs.image import get_image_host, delete_image
-from hexoweb.decorators import staff_required
+from hexoweb.decorators import staff_required, init_not_completed
 from .functions import *
 
 
@@ -69,6 +69,8 @@ def auth(request):
 
 
 # 初始化步骤API api/init_step
+@init_not_completed(redirect_to_login=False)
+@csrf_protect
 def init_step_api(request):
     """统一的初始化步骤API端点"""
     from hexoweb.init import InitService

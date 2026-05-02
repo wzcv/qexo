@@ -212,6 +212,7 @@ class Main(Language):
             "INIT_LOGIN_MSG_4": "登录控制台",
             "INIT_PROVIDER_FAILED": "初始化 PROVIDER 错误: {}",
             "INIT_SUCCESS": "已完成初始化, 转跳至首页",
+            "INIT_ALREADY_COMPLETED": "初始化已完成，无法再次执行",
             "INIT_USER": "用户配置",
             "INIT_USER_FAILED": "初始化用户名密码错误: {}",
             "USERNAME_EXISTS": "用户名已存在",

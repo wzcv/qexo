@@ -170,8 +170,7 @@ def init_view(request):
     elif int(step) >= 6:
         logging.info(gettext("INIT_SUCCESS"))
         return redirect("/")
-    context["project_id"] = get_setting_cached("PROJECT_ID") or os.environ.get("VERCEL_PROJECT_ID")
-    context["vercel_token"] = get_setting_cached("VERCEL_TOKEN")
+    # 不返回敏感数据（vercel_token、project_id）到前端
     context["msg"] = msg
     context["step"] = step
     return render(request, "accounts/init.html", context)

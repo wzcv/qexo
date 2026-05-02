@@ -59,6 +59,57 @@ def staff_required(redirect_to_login=True):
     return decorator
 
 
+def init_not_completed(redirect_to_login=False):
+    """
+    检查初始化是否未完成的装饰器
+    防止已完成初始化的系统再次启动初始化流程
+    
+    Args:
+        redirect_to_login: 是否重定向到登录页（用于web视图），False则返回JSON（用于API）
+    
+    Usage:
+        @init_not_completed()
+        def init_api(request):
+            ...
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(request, *args, **kwargs):
+            from hexoweb.functions import gettext, get_setting_cached
+            
+            try:
+                init_value = get_setting_cached("INIT")
+                current_init = int(init_value) if init_value else 1
+            except (ValueError, TypeError):
+                current_init = 1
+            
+            # 如果初始化已完成（INIT >= 6），拒绝访问
+            if current_init >= 6:
+                logging.warning(
+                    "Attempt to access init API/view after initialization is complete. "
+                    "Current INIT: %s, User IP: %s, Path: %s",
+                    current_init,
+                    request.META.get("REMOTE_ADDR", "unknown"),
+                    request.path
+                )
+                
+                if redirect_to_login:
+                    return redirect("/login/")
+                else:
+                    return JsonResponse(
+                        safe=False,
+                        data={
+                            "msg": gettext("INIT_ALREADY_COMPLETED") or "初始化已完成，无法再次进行",
+                            "status": False
+                        },
+                        status=403
+                    )
+            
+            return func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
+
 def api_auth_required(func):
     """
     检查API Token鉴权的装饰器（用于公共API）

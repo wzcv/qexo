@@ -95,21 +95,12 @@
         const allProviders = {{ all_providers | safe | default:"{}"|safe }};
         const allPlatformConfigs = {{ all_platform_configs | safe | default:"[]"|safe }};
         const allLanguages = {{ all_languages | safe | default:"[]"|safe }};
-        {% if PROVIDER %}
-        let nowProvider = {{ PROVIDER | safe }};
-        {% else %}
+        // 不在前端显示已保存的凭证
         let nowProvider = {};
-        {% endif %}
         const csrfToken = "{{ csrf_token }}";
         
         // 初始上下文数据
         const initialContext = {
-            {% if username %}username: "{{ username }}",{% endif %}
-            {% if password %}password: "{{ password }}",{% endif %}
-            {% if repassword %}repassword: "{{ repassword }}",{% endif %}
-            {% if apikey %}apikey: "{{ apikey }}",{% endif %}
-            {% if vercel_token %}vercel_token: "{{ vercel_token }}",{% endif %}
-            {% if project_id %}project_id: "{{ project_id }}",{% endif %}
             all_platform_configs: allPlatformConfigs,
             all_languages: allLanguages
         };

@@ -58,17 +58,12 @@ class InitService:
             )
 
     def build_provider_context(self, provider_value: Optional[Any]) -> Dict[str, Any]:
+        # 不返回已保存的凭证到前端，仅返回配置参数模板
         context: Dict[str, Any] = {"all_providers": {}, "all_platform_configs": platform_configs()}
         for provider in all_providers():
             context["all_providers"][provider] = get_params(provider)
-        if provider_value:
-            if isinstance(provider_value, str):
-                try:
-                    provider_value = json.loads(provider_value)
-                except (ValueError, TypeError):
-                    pass
-                    # 如果 provider_value 不是有效的 JSON，保留原始字符串
-            context["PROVIDER"] = json.dumps(provider_value)
+        # 移除敏感的 PROVIDER 凭证返回
+        # 前端应通过参数模板（all_providers）和参数输入框获取配置，而非显示已保存的凭证
         return context
 
     def _boolish(self, value: Any) -> bool:
@@ -100,7 +95,7 @@ class InitService:
         password: Optional[str],
         repassword: Optional[str],
         apikey: Optional[str],
-    ) -> StepOutcome:
+    ) -> StepOutcome:        
         if repassword != password:
             return StepOutcome(False, "2", gettext("RESET_PASSWORD_NO_MATCH"), {
                 "username": username,
@@ -172,7 +167,7 @@ class InitService:
             return gettext("HEXO_VERSION").format(verify.get("hexo"))
         return "<br>".join(issues)
 
-    def handle_provider_step(self, post_data: Dict[str, Any]) -> StepOutcome:
+    def handle_provider_step(self, post_data: Dict[str, Any]) -> StepOutcome:        
         provider_payload = self._normalize_provider_payload(post_data)
         provider_name = provider_payload.get("provider")
         if not provider_name:
@@ -202,16 +197,17 @@ class InitService:
         step = "4" if check_if_vercel() else "6"
         save_setting("INIT", step)
 
+        # 不返回敏感数据（vercel_token、project_id）到前端
         if step == "4":
-            context["project_id"] = get_setting_cached("PROJECT_ID") or os.environ.get("VERCEL_PROJECT_ID")
-            context["vercel_token"] = get_setting_cached("VERCEL_TOKEN") or None
+            # 进入 Vercel 配置步骤，但不返回已保存的 Token
+            pass
         else:
             user = self.User.objects.first()
             if user:
                 context["username"] = user.username
         return StepOutcome(True, step, None, context)
 
-    def handle_vercel_step(self, project_id: Optional[str], vercel_token: Optional[str]) -> StepOutcome:
+    def handle_vercel_step(self, project_id: Optional[str], vercel_token: Optional[str]) -> StepOutcome:        
         if not project_id or not vercel_token:
             return StepOutcome(False, "4", gettext("VERIFY_FAILED"), {
                 "project_id": project_id,
