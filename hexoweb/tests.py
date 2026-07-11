@@ -1579,14 +1579,16 @@ class CFImgBedDirectUploadTests(SimpleTestCase):
         self.assertEqual(config["params"]["uploadChannel"], "cfr2")
         self.assertNotIn("imgbed_secret", json.dumps(config))
 
-    def test_direct_config_requires_upload_auth_code(self):
+    def test_direct_config_uses_api_key_when_auth_code_is_missing(self):
         provider = CFImgBedMain(
             api="https://api.example.com/upload",
             api_key="imgbed_secret",
         )
 
-        with self.assertRaisesRegex(ValueError, "upload auth code"):
-            provider.direct_upload_config()
+        config = provider.direct_upload_config()
+
+        self.assertEqual(config["headers"], {"Authorization": "Bearer imgbed_upload_only"})
+        self.assertNotIn("authCode", config["params"])
 
     def test_complete_direct_upload_rejects_unexpected_host(self):
         provider = CFImgBedMain(
@@ -1627,6 +1629,23 @@ class CFImgBedDirectUploadApiTests(TestCase):
         self.assertEqual(payload["config"]["params"]["authCode"], "upload-only")
         self.assertNotIn("imgbed_secret", response.content.decode("utf-8"))
         self.assertEqual(response["Cache-Control"], "no-store")
+
+    @patch("hexoweb.api.get_setting_cached")
+    def test_config_endpoint_supports_api_key_only_bearer_upload(self, mock_setting):
+        api_key_host = json.loads(json.dumps(self.image_host))
+        api_key_host["params"]["auth_code"] = ""
+        mock_setting.return_value = json.dumps(api_key_host)
+
+        response = self.client.get("/api/upload/config/")
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertTrue(payload["direct"])
+        self.assertEqual(
+            payload["config"]["headers"],
+            {"Authorization": "Bearer imgbed_secret"},
+        )
+        self.assertNotIn("authCode", payload["config"]["params"])
 
     @patch("hexoweb.api.get_setting_cached")
     def test_complete_endpoint_records_direct_upload_and_server_delete_credentials(self, mock_setting):

@@ -119,14 +119,11 @@ class Main(Provider):
         if parsed_api.scheme not in {"http", "https"} or not parsed_api.netloc:
             raise ValueError("CFImgBed API address must be an absolute HTTP(S) URL")
 
-        if not self.auth_code:
-            raise ValueError("CFImgBed direct upload requires an upload auth code")
+        headers = {} if self.auth_code else self._upload_headers()
 
         return {
             "url": self.api,
-            # Never expose an API token to browser JavaScript. authCode is the
-            # CFImgBed user-upload credential and is intentionally preferred.
-            "headers": {},
+            "headers": headers,
             "params": self._upload_params(),
             "json_path": self.json_path,
             "field_name": "file",
