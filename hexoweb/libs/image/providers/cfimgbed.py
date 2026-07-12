@@ -191,8 +191,9 @@ class Main(Provider):
         if parsed.scheme and parsed.scheme not in {"http", "https"}:
             raise ValueError("CFImgBed returned an unsupported image URL")
         if not parsed.scheme:
+            if parsed.netloc:
+                raise ValueError("CFImgBed returned an image URL from an unexpected host")
             return
-
         allowed_hosts = {urlsplit(self.api).netloc.lower()}
         if self.custom_url:
             allowed_hosts.add(urlsplit(self.custom_url).netloc.lower())
