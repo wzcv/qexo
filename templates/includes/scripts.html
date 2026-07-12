@@ -373,7 +373,7 @@
         completeData.append('remote_url', qexoExtractUploadUrl(responseText, config.json_path));
         completeData.append('name', file.name);
         completeData.append('size', String(file.size));
-        completeData.append('content_type', file.type || 'application/octet-stream');
+        completeData.append('content_type', file.type);
         const completeResponse = await fetch('/api/upload/complete/', {
             method: 'POST',
             credentials: 'same-origin',

@@ -1587,7 +1587,7 @@ class CFImgBedDirectUploadTests(SimpleTestCase):
 
         config = provider.direct_upload_config()
 
-        self.assertEqual(config["headers"], {"Authorization": "Bearer imgbed_upload_only"})
+        self.assertEqual(config["headers"], {"Authorization": "Bearer imgbed_secret"})
         self.assertNotIn("authCode", config["params"])
 
     def test_complete_direct_upload_rejects_unexpected_host(self):
